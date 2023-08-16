@@ -2,6 +2,7 @@ import hikari
 import lightbulb
 import discord
 import random
+import datetime as dt
 
 plugin = lightbulb.Plugin('Commands')
 
@@ -16,6 +17,35 @@ async def print_messages(event):
 @lightbulb.implements(lightbulb.SlashCommand)
 async def say_command(ctx):
     await ctx.respond(ctx.options.text_var)
+
+#Say Hello
+@plugin.command
+@lightbulb.command('hello','hello')
+@lightbulb.implements(lightbulb.SlashCommand)
+async def hello_command(ctx):
+     greetings=[
+          "Hi there!",
+          "Hey!",
+          "Hello!",
+          "Howdy!",
+          "Greetings!",
+          "Salutations!",
+          "What's up?",
+          "Yo!",
+          "Hiya!",
+          "How's it going?",
+          "Hey, what's cracking?",
+          "Hola!",
+          "Good day!",
+          "Hi, friend!",
+          "Aloha!",
+          "Sup?",
+          "Hi, there, lovely!",
+          "Wassup?",
+          "Bonjour!"
+     ]
+     msgs = random.choice(greetings)
+     await ctx.respond(f"{msgs} {ctx.author.mention}")
 
 #Clear command
 @plugin.command
@@ -68,20 +98,40 @@ async def multiplication_command(ctx):
 async def division_command(ctx):
      await ctx.respond(ctx.options.num1 / ctx.options.num2)
 
-#Not working UserInfo
+#UserInfo
 @plugin.command
+@lightbulb.option('target', 'Member', hikari.Member)
 @lightbulb.command('userinfo', 'userinfo')
 @lightbulb.implements(lightbulb.SlashCommand)
-async def userinfo_command(ctx):
-     embed=(
-          hikari.Embed(
-            title = 'Ceva',
-            color = 0xFBBBBD,
-          )
-          .set_thumbnail(ctx.author.avatar_url)
-          .set_footer("This is a footer")
-          .add_field("Field 1","Random")
+async def userinfo_command(ctx: lightbulb.context.Context) -> None:
+     target_ = ctx.options.target
+     target = (
+        target_
+        if isinstance(target_, hikari.Member)
+        else ctx.get_guild().get_member(target_)
      )
+     if not target:
+        await ctx.respond("That user is not in the server.")
+        return
+
+     created_at = int(target.created_at.timestamp())
+     joined_at = int(target.joined_at.timestamp())
+     roles = (await target.fetch_roles())[1:]
+
+     embed = (
+        hikari.Embed(
+            title="User information",
+            description=f"ID: {target.id}",
+            colour=hikari.Colour(0x563275),
+        )
+        .set_thumbnail(target.avatar_url)
+        .set_footer("Random")
+        .add_field(name='Name: ', value=target.display_name, inline=False)
+        .add_field(name='Bot?',value=target.is_bot, inline=False)
+        .add_field(name='Requested by: ', value=ctx.author.username, inline=False)
+    )
+
+     await ctx.respond(embed)
 
 #Join New Server  NotWorking!  
 @plugin.listener

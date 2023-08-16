@@ -21,14 +21,39 @@ async def rmvrole_command(ctx):
     await ctx.member.remove_role('1137755946974715964')
     await ctx.respond('Role removed')
 
-#Kick Not Working
+#Kick
 @plugin.command
+@lightbulb.option('target', 'Member', hikari.Member)
 @lightbulb.command('kick','kick a member')
 @lightbulb.implements(lightbulb.SlashCommand)
-async def kick_command(ctx, member : hikari.User, reason=None):
-    member_id=member.id
-    await ctx.bot.rest.create_guild_ban(ctx.get_guild(), member_id, reason=reason)
-    await ctx.respond(f'{member.display_name} has been kicked. Reason: {reason}')
+async def kick_command(ctx: lightbulb.context.Context) -> None:
+    target_ = ctx.options.target
+    target = (
+        target_
+        if isinstance(target_, hikari.Member)
+        else ctx.get_guild().get_member(target_)
+     )
+    if not target:
+        await ctx.respond("That user is not in the server.")
+        return
+    await target.kick(reason='None')
+
+#Ban
+@plugin.command
+@lightbulb.option('target', 'Member', hikari.Member)
+@lightbulb.command('ban','ban a member')
+@lightbulb.implements(lightbulb.SlashCommand)
+async def kick_command(ctx: lightbulb.context.Context) -> None:
+    target_ = ctx.options.target
+    target = (
+        target_
+        if isinstance(target_, hikari.Member)
+        else ctx.get_guild().get_member(target_)
+     )
+    if not target:
+        await ctx.respond("That user is not in the server.")
+        return
+    await target.ban(reason='None')
 
 def load(bot):
     bot.add_plugin(plugin)

@@ -6,14 +6,23 @@ import sys
 
 plugin = lightbulb.Plugin('control_panel')
 
+#Shutdown
+@plugin.command()
+@lightbulb.add_checks(lightbulb.owner_only)
+@lightbulb.command('shutdown','shutdown')
+@lightbulb.implements(lightbulb.SlashCommand)
+async def command_shutdown(ctx: lightbulb.Context) -> None:
+    await ctx.bot.close()
 
+#Restart
 def restart_bot(): 
   os.execv(sys.executable, ['python'] + sys.argv)
 @plugin.command()
+@lightbulb.add_checks(lightbulb.owner_only)
 @lightbulb.command('restart','Restart')
 @lightbulb.implements(lightbulb.SlashCommand)
 async def restart(ctx):
-  await ctx.respond("Restarting bot...")
+  await ctx.respond('Restanting....')
   restart_bot()
 
 

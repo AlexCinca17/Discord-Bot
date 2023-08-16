@@ -4,7 +4,7 @@ import discord
 import random
 
 bot = lightbulb.BotApp(token='',
-                        default_enabled_guilds=(896776357286129704), intents=hikari.Intents.ALL)
+                        default_enabled_guilds=(), intents=hikari.Intents.ALL)
 
 @bot.listen(hikari.StartedEvent)
 async def on_started(event):
